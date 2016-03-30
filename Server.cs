@@ -51,6 +51,18 @@ namespace MMS_Server
                 Clients.Add(new Client(stream, name));
                 Clients.ForEach(o => writer.Write(o.Name));
                 writer.Write("End");
+                bool exit = false;
+                do
+                {
+                    string s = reader.ReadString();
+                    //Console.WriteLine(s);
+                    //Сообщаем всем клиентам что сказал данный
+                    Clients.ForEach(o => o.Send(s));
+                    exit = s == "End";
+                } while (!exit);
+                //Тут клиент покинул чат, удаляем его...
+
+
             }
         }
     }
@@ -63,6 +75,11 @@ namespace MMS_Server
         {
             this.Stream = Stream;
             this.Name = Name;
+        }
+        public void Send(string str)
+        {
+            BinaryWriter writer = new BinaryWriter(Stream);
+            writer.Write(str);
         }
     }
 }
