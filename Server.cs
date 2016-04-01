@@ -11,7 +11,7 @@ namespace MMS_Server
 {
     class Server
     {
-        static List<Client> Clients = new List<Client>();
+        public static List<Client> Clients = new List<Client>();
         static void Main(string[] args)
         {
             //Запускаем сервер
@@ -48,21 +48,43 @@ namespace MMS_Server
                 //Клиент просится подключиться, говорит своё имя
                 string name = reader.ReadString();
                 //Добавляем клиента в список и сообщаем полный список имён
-                Clients.Add(new Client(stream, name));
-                Clients.ForEach(o => writer.Write(o.Name));
-                writer.Write("End");
+                Client User = new Client(stream, name);
+                Clients.Add(User);
+                //Оповестим всех о присоединении
+                Client.SendToAll("Incoming", User);
+                Client.SendToAll(User.Name, User);
+                Client.SendUserList();
                 bool exit = false;
                 do
                 {
-                    string s = reader.ReadString();
-                    //Console.WriteLine(s);
-                    //Сообщаем всем клиентам что сказал данный
-                    Clients.ForEach(o => o.Send(s));
-                    exit = s == "End";
+                    string command = reader.ReadString();
+                    if (command == "Message")
+                    {
+                        Client.SendToAll("Message");
+                        Client.SendToAll(User.Name);
+                        Client.SendToAll(reader.ReadString());
+                        Client.SendToAll(reader.ReadString());
+                    }
+                    if (command == "Rename")
+                    {
+                        string oldname = User.Name;
+                        User.Name = reader.ReadString();
+
+                        //Надо сообщить в чат о смене имени
+                        Client.SendToAll("Rename");
+                        Client.SendToAll(oldname);
+                        Client.SendToAll(User.Name);
+                        Client.SendUserList();
+                        Client.SendUserList();
+                    }
+                    exit = command == "End";
                 } while (!exit);
                 //Тут клиент покинул чат, удаляем его...
-
-
+                Clients.Remove(User);
+                //И оповещаем остальных об его уходе
+                Client.SendToAll("Exit", User);
+                Client.SendToAll(User.Name, User);
+                Client.SendUserList();
             }
         }
     }
@@ -71,15 +93,43 @@ namespace MMS_Server
     {
         public NetworkStream Stream;
         public string Name;
+        BinaryReader Reader;
+        BinaryWriter Writer;
+
         public Client(NetworkStream Stream, string Name)
         {
             this.Stream = Stream;
             this.Name = Name;
+            Reader = new BinaryReader(Stream);
+            Writer = new BinaryWriter(Stream);
+
         }
-        public void Send(string str)
+        void Send(string str)
         {
-            BinaryWriter writer = new BinaryWriter(Stream);
-            writer.Write(str);
+            Writer.Write(str);
+        }
+
+        static public void SendToAll(string str)
+        {
+            Server.Clients.ForEach(o => o.Send(str));
+        }
+
+        static public void SendToAll(string str, Client Except)
+        {
+            Server.Clients.ForEach(o =>
+            {
+                if (o != Except) o.Send(str);
+            });
+        }
+
+        static public void SendUserList()
+        {
+            Server.Clients.ForEach(o =>
+            {
+                o.Send("RenewUserList");
+                Server.Clients.ForEach(c => o.Send(c.Name));
+                o.Send("End");
+            });
         }
     }
 }
