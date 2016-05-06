@@ -10,8 +10,8 @@ namespace MMC
 {
     static class Client
     {
-        static bool Connected = false;
-        static Thread Listen = new Thread(Listener);
+        public static bool Connected = false;
+        static Thread Listen;
         static NetworkStream Stream;
         static BinaryReader NetReader;
         static BinaryWriter NetWriter;
@@ -22,14 +22,21 @@ namespace MMC
         /// </summary>
         public static void Connect()
         {
-            TcpClient client = new TcpClient();
-            client.Connect(Properties.Settings.Default.Server, 7770);
-            Stream = client.GetStream();
-            NetReader = new BinaryReader(Stream);
-            NetWriter = new BinaryWriter(Stream);
-            //Просимся подключиться, сообщаем имя
-            NetWriter.Write("Аноним");
-            Listen.Start();
+            if (Connected) return;
+            try
+            {
+                TcpClient client = new TcpClient();
+                client.Connect(Properties.Settings.Default.Server, 7770);
+                Stream = client.GetStream();
+                NetReader = new BinaryReader(Stream);
+                NetWriter = new BinaryWriter(Stream);
+                //Просимся подключиться, сообщаем имя
+                NetWriter.Write("Аноним");
+                Listen = new Thread(Listener);
+                Listen.Start();
+                Connected = true;
+            }
+            catch { Connected = false; }
         }
 
         /// <summary>
@@ -37,9 +44,14 @@ namespace MMC
         /// </summary>
         public static void Disconnect()
         {
-            Listen.Abort();
-            BinaryWriter writer = new BinaryWriter(Stream);
-            writer.Write("End");
+            try
+            {
+                Listen.Abort();
+                BinaryWriter writer = new BinaryWriter(Stream);
+                writer.Write("End");
+            }
+            catch { }
+            Connected = false;
         }
 
         static void Listener()
@@ -63,9 +75,13 @@ namespace MMC
         /// <param name="message"></param>
         public static void SendMessage(string message)
         {
-            NetWriter.Write("Message");
-            NetWriter.Write("All");
-            NetWriter.Write(message);
+            try
+            {
+                NetWriter.Write("Message");
+                NetWriter.Write("All");
+                NetWriter.Write(message);
+            }
+            catch { Connected = false; }
         }
 
         /// <summary>
@@ -74,13 +90,17 @@ namespace MMC
         /// <param name="newnick"></param>
         public static void ChangeNick(string newnick)
         {
-            if (newnick != "")
-            //На самом деле надо сделать проверку на стороне сервера, где будет проверено
-            //можно ли вообще иметь такой ник
+            try
             {
-                NetWriter.Write("Rename");
-                NetWriter.Write(newnick);
+                if (newnick != "")
+                //На самом деле надо сделать проверку на стороне сервера, где будет проверено
+                //можно ли вообще иметь такой ник
+                {
+                    NetWriter.Write("Rename");
+                    NetWriter.Write(newnick);
+                }
             }
+            catch { Connected = false; }
         }
     }
 }

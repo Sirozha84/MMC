@@ -26,8 +26,8 @@ namespace MMC
 
         private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("My Micro Chat\nВерсия: 0.0.1\n" +
-                "Автор: Сергей Гордеев", "О программе MMC",
+            MessageBox.Show("My Micro Chat\nВерсия: " + Application.ProductVersion +
+                "\nАвтор: Сергей Гордеев", "О программе MMC",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -64,6 +64,8 @@ namespace MMC
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            подключитьсяToolStripMenuItem.Enabled = !Client.Connected;
+            отключитьсяToolStripMenuItem.Enabled = Client.Connected;
             while (Client.Messages.Count > 0)
             {
                 string message = ReadMessage();
@@ -130,6 +132,16 @@ namespace MMC
         private void серверToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Пока только этот...");
+        }
+
+        private void подключитьсяToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Client.Connect();
+        }
+
+        private void отключитьсяToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Client.Disconnect();
         }
     }
 }
