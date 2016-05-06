@@ -14,14 +14,6 @@ namespace MMC
 {
     public partial class FormMain : Form
     {
-        //Thread Listen = new Thread(new ThreadStart(Listener));
-        Thread Listen = new Thread(new ParameterizedThreadStart(Listener));
-        static NetworkStream Stream;
-        static BinaryReader NetReader;
-        static BinaryWriter NetWriter;
-        static List<string> Messages = new List<string>();
-        static string ServerName = "localhost";
-
         public FormMain()
         {
             InitializeComponent();
@@ -41,24 +33,10 @@ namespace MMC
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            TcpClient client = new TcpClient();
-            client.Connect(ServerName, 80);
-            Stream = client.GetStream();
-            NetReader = new BinaryReader(Stream);
-            NetWriter = new BinaryWriter(Stream);
-            //Просимся подключиться, сообщаем имя
-            NetWriter.Write("Аноним");
-            Log("Подключение к серверу \""+ ServerName+"\" установлено");
-            Listen.Start(this);
+            Client.Connect();
+            Log("Подключение к серверу \"" + Properties.Settings.Default.Server + "\" установлено");
         }
 
-        static void Listener(object o)
-        {
-            while (true)
-            {
-                Messages.Add(NetReader.ReadString());
-            }
-        }
 
         void Log(string str)
         {
@@ -70,9 +48,7 @@ namespace MMC
 
         private void button1_Click(object sender, EventArgs e)
         {
-            NetWriter.Write("Message");
-            NetWriter.Write("All");
-            NetWriter.Write(textBoxMessage.Text);
+            Client.SendMessage(textBoxMessage.Text);
             textBoxMessage.Text = "";
         }
 
@@ -83,14 +59,12 @@ namespace MMC
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Listen.Abort();
-            BinaryWriter writer = new BinaryWriter(Stream);
-            writer.Write("End");
+            Client.Disconnect();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            while (Messages.Count > 0)
+            while (Client.Messages.Count > 0)
             {
                 string message = ReadMessage();
                 if (message == "Message")
@@ -129,10 +103,10 @@ namespace MMC
 
         string ReadMessage()
         {
-            if (Messages.Count > 0)
+            if (Client.Messages.Count > 0)
             {
-                string s = Messages[0];
-                Messages.RemoveAt(0);
+                string s = Client.Messages[0];
+                Client.Messages.RemoveAt(0);
                 return s;
             }
             return null;
@@ -140,14 +114,7 @@ namespace MMC
 
         private void никToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string newnick = Question("Введите своё имя в чате (ник):");
-            if (newnick != "")
-                //На самом деле надо сделать проверку на стороне сервера, где будет проверено
-                //можно ли вообще иметь такой ник
-            {
-                NetWriter.Write("Rename");
-                NetWriter.Write(newnick);
-            }
+            Client.ChangeNick(Question("Введите своё имя в чате (ник):"));
         }
 
         string Question(string question)
