@@ -31,7 +31,12 @@ namespace MMC
                 NetReader = new BinaryReader(Stream);
                 NetWriter = new BinaryWriter(Stream);
                 //Просимся подключиться, сообщаем имя
-                NetWriter.Write("Аноним");
+                NetWriter.Write(Properties.Settings.Default.NickName);
+                if (NetReader.ReadString() != "OK")
+                {
+                    Connected = false;
+                    return;
+                }
                 Listen = new Thread(Listener);
                 Listen.Start();
                 Connected = true;

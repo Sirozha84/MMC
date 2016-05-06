@@ -33,17 +33,56 @@ namespace MMC
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Client.Connect();
-            Log("Подключение к серверу \"" + Properties.Settings.Default.Server + "\" установлено");
+            подключитьсяToolStripMenuItem_Click(null, null);
         }
 
 
-        void Log(string str)
+        void Log(params string[] str)
         {
-            if (textBoxLog.Text != "") textBoxLog.Text += Environment.NewLine;
-            textBoxLog.Text += DateTime.Now.ToString("[HH:mm] ") + str;
-            textBoxLog.Select(textBoxLog.Text.Length - 1, 0);
-            textBoxLog.ScrollToCaret();
+            richTextBoxLog.SelectionColor = Color.DimGray;
+            richTextBoxLog.AppendText(DateTime.Now.ToString("[HH:mm] "));
+            if (str.Length == 1)
+            {
+                richTextBoxLog.SelectionColor = Color.White;
+                richTextBoxLog.AppendText(str[0]);
+            }
+            if (str[0] == "Message" & str.Length > 2)
+            {
+                richTextBoxLog.SelectionColor = Color.DarkGreen;
+                richTextBoxLog.AppendText("<");
+                richTextBoxLog.SelectionColor = Color.Green;
+                richTextBoxLog.AppendText(str[1]);
+                richTextBoxLog.SelectionColor = Color.DarkGreen;
+                richTextBoxLog.AppendText("> ");
+                richTextBoxLog.SelectionColor = Color.Yellow;
+                richTextBoxLog.AppendText(str[2]);
+            }
+            if (str[0] == "Incoming" & str.Length > 1)
+            {
+                richTextBoxLog.SelectionColor = Color.Green;
+                richTextBoxLog.AppendText(str[1]);
+                richTextBoxLog.SelectionColor = Color.DarkGreen;
+                richTextBoxLog.AppendText(" вошёл в чат");
+            }
+            if (str[0] == "Exit" & str.Length > 1)
+            {
+                richTextBoxLog.SelectionColor = Color.Red;
+                richTextBoxLog.AppendText(str[1]);
+                richTextBoxLog.SelectionColor = Color.DarkRed;
+                richTextBoxLog.AppendText(" вышел из чата");
+            }
+            if (str[0] == "Rename" & str.Length > 2)
+            {
+                richTextBoxLog.SelectionColor = Color.Blue;
+                richTextBoxLog.AppendText(str[1]);
+                richTextBoxLog.SelectionColor = Color.DarkBlue;
+                richTextBoxLog.AppendText(" теперь ");
+                richTextBoxLog.SelectionColor = Color.Blue;
+                richTextBoxLog.AppendText(str[2]);
+            }
+
+            richTextBoxLog.AppendText(Environment.NewLine);
+            richTextBoxLog.ScrollToCaret();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -60,6 +99,7 @@ namespace MMC
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Client.Disconnect();
+            Properties.Settings.Default.Save();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -74,7 +114,7 @@ namespace MMC
                     string name = ReadMessage();
                     string to = ReadMessage();
                     string mes = ReadMessage();
-                    Log("<" + name + "> " + mes);
+                    Log("Message", name, mes);
                 }
                 if (message == "RenewUserList")
                 {
@@ -88,17 +128,18 @@ namespace MMC
                 }
                 if (message == "Incoming")
                 {
-                    Log(ReadMessage() + " вошёл в чат");
+                    Log("Incoming", ReadMessage());
                 }
                 if (message == "Exit")
                 {
-                    Log(ReadMessage() + " вышел из чата");
+                    Log("Exit", ReadMessage());
                 }
                 if (message == "Rename")
                 {
-                    string oldname = ReadMessage();
-                    string newname = ReadMessage();
-                    Log(oldname + " теперь " + newname);
+                    Log("Rename", ReadMessage(), ReadMessage());
+                    //string oldname = ReadMessage();
+                    //string newname = ReadMessage();
+                    //Log(oldname + " теперь " + newname);
                 }
             }
         }
@@ -116,7 +157,9 @@ namespace MMC
 
         private void никToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Client.ChangeNick(Question("Введите своё имя в чате (ник):"));
+            string nick = Question("Введите своё имя в чате (ник):");
+            Properties.Settings.Default.NickName = nick;
+            Client.ChangeNick(nick);
         }
 
         string Question(string question)
@@ -137,11 +180,15 @@ namespace MMC
         private void подключитьсяToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Client.Connect();
+            if (Client.Connected)
+                Log("Подключение к серверу \"" + Properties.Settings.Default.Server + "\" установлено");
         }
 
         private void отключитьсяToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Client.Disconnect();
+            Log("Подключение разорвано");
+            listBoxUsers.Items.Clear();
         }
     }
 }

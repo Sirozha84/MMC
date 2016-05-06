@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.textBoxLog = new System.Windows.Forms.TextBox();
             this.listBoxUsers = new System.Windows.Forms.ListBox();
             this.textBoxMessage = new System.Windows.Forms.TextBox();
-            this.buttonSend = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.подключитьсяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,53 +43,37 @@
             this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.оПрограммеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // textBoxLog
-            // 
-            this.textBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxLog.BackColor = System.Drawing.Color.White;
-            this.textBoxLog.Location = new System.Drawing.Point(12, 27);
-            this.textBoxLog.Multiline = true;
-            this.textBoxLog.Name = "textBoxLog";
-            this.textBoxLog.ReadOnly = true;
-            this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxLog.Size = new System.Drawing.Size(403, 289);
-            this.textBoxLog.TabIndex = 2;
             // 
             // listBoxUsers
             // 
             this.listBoxUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxUsers.BackColor = System.Drawing.Color.Black;
+            this.listBoxUsers.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listBoxUsers.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.listBoxUsers.ForeColor = System.Drawing.Color.White;
             this.listBoxUsers.FormattingEnabled = true;
-            this.listBoxUsers.Location = new System.Drawing.Point(421, 27);
+            this.listBoxUsers.Location = new System.Drawing.Point(467, 28);
             this.listBoxUsers.Name = "listBoxUsers";
-            this.listBoxUsers.Size = new System.Drawing.Size(73, 290);
+            this.listBoxUsers.Size = new System.Drawing.Size(113, 299);
             this.listBoxUsers.TabIndex = 3;
             // 
             // textBoxMessage
             // 
             this.textBoxMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxMessage.Location = new System.Drawing.Point(12, 323);
+            this.textBoxMessage.BackColor = System.Drawing.Color.Black;
+            this.textBoxMessage.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxMessage.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxMessage.ForeColor = System.Drawing.Color.White;
+            this.textBoxMessage.Location = new System.Drawing.Point(4, 344);
             this.textBoxMessage.Name = "textBoxMessage";
-            this.textBoxMessage.Size = new System.Drawing.Size(403, 20);
+            this.textBoxMessage.Size = new System.Drawing.Size(576, 13);
             this.textBoxMessage.TabIndex = 0;
             this.textBoxMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-            // 
-            // buttonSend
-            // 
-            this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSend.Location = new System.Drawing.Point(421, 323);
-            this.buttonSend.Name = "buttonSend";
-            this.buttonSend.Size = new System.Drawing.Size(73, 20);
-            this.buttonSend.TabIndex = 1;
-            this.buttonSend.Text = "Отправить";
-            this.buttonSend.UseVisualStyleBackColor = true;
-            this.buttonSend.Click += new System.EventHandler(this.button1_Click);
             // 
             // menuStrip1
             // 
@@ -101,7 +83,7 @@
             this.справкаToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(506, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(584, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -155,14 +137,14 @@
             // никToolStripMenuItem
             // 
             this.никToolStripMenuItem.Name = "никToolStripMenuItem";
-            this.никToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.никToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.никToolStripMenuItem.Text = "Сменить ник";
             this.никToolStripMenuItem.Click += new System.EventHandler(this.никToolStripMenuItem_Click);
             // 
             // серверToolStripMenuItem
             // 
             this.серверToolStripMenuItem.Name = "серверToolStripMenuItem";
-            this.серверToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.серверToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.серверToolStripMenuItem.Text = "Сервер";
             this.серверToolStripMenuItem.Click += new System.EventHandler(this.серверToolStripMenuItem_Click);
             // 
@@ -186,18 +168,33 @@
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // richTextBoxLog
+            // 
+            this.richTextBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxLog.BackColor = System.Drawing.Color.Black;
+            this.richTextBoxLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBoxLog.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.richTextBoxLog.ForeColor = System.Drawing.Color.White;
+            this.richTextBoxLog.Location = new System.Drawing.Point(4, 28);
+            this.richTextBoxLog.Name = "richTextBoxLog";
+            this.richTextBoxLog.Size = new System.Drawing.Size(459, 312);
+            this.richTextBoxLog.TabIndex = 5;
+            this.richTextBoxLog.Text = "";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(506, 354);
-            this.Controls.Add(this.buttonSend);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.Controls.Add(this.richTextBoxLog);
             this.Controls.Add(this.textBoxMessage);
             this.Controls.Add(this.listBoxUsers);
-            this.Controls.Add(this.textBoxLog);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(200, 150);
+            this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "FormMain";
             this.Text = "MMC";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
@@ -210,11 +207,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox textBoxLog;
         private System.Windows.Forms.ListBox listBoxUsers;
         private System.Windows.Forms.TextBox textBoxMessage;
-        private System.Windows.Forms.Button buttonSend;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
@@ -227,6 +221,7 @@
         private System.Windows.Forms.ToolStripMenuItem подключитьсяToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem отключитьсяToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.RichTextBox richTextBoxLog;
     }
 }
 
